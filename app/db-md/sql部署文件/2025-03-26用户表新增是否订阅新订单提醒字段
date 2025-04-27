@@ -1,0 +1,7 @@
+ALTER TABLE users 
+ADD COLUMN subscribe_order_notify TINYINT(1) NOT NULL DEFAULT 0 
+COMMENT '是否订阅新订单提醒';
+
+# 回滚操作
+ALTER TABLE users 
+DROP COLUMN subscribe_order_notify;

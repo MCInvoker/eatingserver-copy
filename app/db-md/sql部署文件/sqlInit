@@ -1,0 +1,121 @@
+-- 用户表
+CREATE TABLE users (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(255) UNIQUE DEFAULT NULL,
+    password VARCHAR(255) DEFAULT NULL,
+    email VARCHAR(255) UNIQUE DEFAULT NULL,
+    nickname VARCHAR(255),
+    avatar VARCHAR(255),
+    title VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    openid VARCHAR(255) UNIQUE NOT NULL,
+    user_code INT UNIQUE,
+    is_deleted ENUM('1', '0') NOT NULL DEFAULT '0'
+);
+
+-- 菜肴标签表
+CREATE TABLE dish_tags (
+    tag_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,  -- 关联到用户表
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    is_deleted ENUM('1', '0') NOT NULL DEFAULT '0'
+);
+
+-- 菜肴分类表
+CREATE TABLE dish_categories (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,  -- 关联到用户表
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    is_deleted ENUM('1', '0') NOT NULL DEFAULT '0'
+);
+
+-- 菜肴表
+CREATE TABLE dishes (
+    dish_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
+    price DECIMAL(10, 2),
+    is_disclosure ENUM('1', '0') DEFAULT '1',
+    is_deleted ENUM('1', '0') DEFAULT '0',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- 菜肴图片表
+CREATE TABLE dish_images (
+    image_id INT PRIMARY KEY AUTO_INCREMENT,
+    dish_id INT,
+    width INT,
+    height INT,
+    url VARCHAR(255) NOT NULL,
+    FOREIGN KEY (dish_id) REFERENCES dishes(dish_id) ON DELETE CASCADE,
+    is_deleted ENUM('1', '0') NOT NULL DEFAULT '0'
+);
+
+-- 菜肴分类关联表
+CREATE TABLE dish_category_relations (
+    dish_id INT,
+    category_id INT,
+    PRIMARY KEY (dish_id, category_id),
+    FOREIGN KEY (dish_id) REFERENCES dishes(dish_id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES dish_categories(category_id) ON DELETE CASCADE,
+    is_deleted ENUM('1', '0') NOT NULL DEFAULT '0'
+);
+
+-- 菜肴标签关联表
+CREATE TABLE dish_tag_relations (
+    dish_id INT,
+    tag_id INT,
+    PRIMARY KEY (dish_id, tag_id),
+    FOREIGN KEY (dish_id) REFERENCES dishes(dish_id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES dish_tags(tag_id) ON DELETE CASCADE,
+    is_deleted ENUM('1', '0') NOT NULL DEFAULT '0'
+);
+
+-- 关注表
+CREATE TABLE follows (
+    follower_id INT,
+    following_id INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (follower_id, following_id),
+    FOREIGN KEY (follower_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (following_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    is_deleted ENUM('1', '0') NOT NULL DEFAULT '0'
+);
+
+-- 点餐订单表
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT,
+    chef_id INT,
+    status ENUM('1', '2', '3', '4', '5') NOT NULL,
+    note VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (chef_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    is_deleted ENUM('1', '0') NOT NULL DEFAULT '0'
+);
+
+-- 订单菜肴详情表
+CREATE TABLE order_dish_details (
+    detail_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    dish_id INT,
+    quantity INT NOT NULL,
+    note VARCHAR(255),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (dish_id) REFERENCES dishes(dish_id) ON DELETE CASCADE,
+    is_deleted ENUM('1', '0') NOT NULL DEFAULT '0'
+);

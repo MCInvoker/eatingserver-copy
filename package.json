@@ -1,0 +1,51 @@
+{
+    "name": "eatingserver",
+    "version": "1.0.0",
+    "description": "面向家庭点餐小程序的服务端",
+    "private": true,
+    "egg": {
+        "declarations": true
+    },
+    "dependencies": {
+        "@babel/core": "^7.25.2",
+        "@babel/preset-env": "^7.25.4",
+        "@babel/register": "^7.24.6",
+        "ali-oss": "^6.21.0",
+        "axios": "^1.7.5",
+        "dayjs": "^1.11.13",
+        "egg": "^3.17.5",
+        "egg-cors": "^3.0.1",
+        "egg-jwt": "^3.1.7",
+        "egg-redis": "^2.6.0",
+        "egg-scripts": "2",
+        "egg-sequelize": "^6.0.0",
+        "mysql2": "^3.11.0",
+        "sequelize": "^6.37.3"
+    },
+    "devDependencies": {
+        "egg-bin": "6",
+        "egg-mock": "5",
+        "eslint": "8",
+        "eslint-config-egg": "13"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "start": "egg-scripts start --daemon --title=egg-server-eatingserver --port ${PORT:-7003} --require @babel/register",
+        "stop": "egg-scripts stop --title=egg-server-eatingserver --require @babel/register",
+        "stop-by-port": "lsof -ti:$PORT | xargs kill -9 || echo 'No process running on port $PORT'",
+        "dev": "egg-bin dev --port 7003 --require @babel/register",
+        "test": "npm run lint -- --fix && npm run test:local --require @babel/register",
+        "test:local": "egg-bin test --require @babel/register",
+        "cov": "egg-bin cov --require @babel/register",
+        "lint": "eslint . --require @babel/register",
+        "ci": "npm run lint && npm run cov --require @babel/register"
+    },
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "author": "invoker",
+    "license": "MIT"
+}
